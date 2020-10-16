@@ -32,14 +32,14 @@ class QuestionView extends Component {
 
   handleGetCategories = async () => {
     const result = await getCategories();
-    this.setState({ categories: result.categories })
+    if (result) this.setState({ categories: result.categories })
   }
 
   handleGetQuestions = async () => {
     let result;
     if (this.state.category) result = await getCategoryQuestions(this.state.category, this.state.page);
     else result = await getQuestions(this.state.page);
-    this.setState({ questions: result.questions, totalQuestions: result.total })
+    if (result) this.setState({ questions: result.questions, totalQuestions: result.total })
   }
 
   selectPage(num) {
@@ -66,14 +66,14 @@ class QuestionView extends Component {
 
   submitSearch = async (searchTerm) => {
     const result = await searchQuestions(searchTerm);
-    this.setState({ questions: result.questions, totalQuestions: result.total });
+    if (result) this.setState({ questions: result.questions, totalQuestions: result.total });
   }
 
   questionAction = (id) => async (action) => {
     if(action === 'DELETE') {
       if(window.confirm('are you sure you want to delete the question?')) {
         const result = await deleteQuestion(id);
-        this.setState({ questions: result.questions, totalQuestions: result.total })
+        if (result) this.setState({ questions: result.questions, totalQuestions: result.total })
       }
     }
   }

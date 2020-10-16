@@ -58,6 +58,11 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 #### Request
 
 `GET /questions?page={page_number}`
+##### parameters:
+| name  | type  | required  |
+| ------------ | ------------ | ------------ |
+|  page | GET  | optional  |
+
 
     curl -i -H 'Accept: application/json' 'http://localhost:3000/questions?page=1'
 
@@ -114,6 +119,13 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 #### Request
 
 `POST /questions`
+##### parameters:
+| name  | type  | required  |
+| ------------ | ------------ | ------------ |
+|  question | POST  | required  |
+|  answer | POST  | required  |
+|  difficulty | POST  | required  |
+|  category | POST  | required  |
 
     curl  -i -H 'Accept: application/json' \
 		-H 'Content-Type: application/json;charset=utf-8' \
@@ -198,6 +210,10 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 #### Request
 
 `POST /questions/search`
+##### parameters:
+| name  | type  | required  |
+| ------------ | ------------ | ------------ |
+|  keyword | POST  | required  |
 
     curl  -i -H 'Accept: application/json' \
 		-H 'Content-Type: application/json;charset=utf-8' \
@@ -237,6 +253,11 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 #### Request
 
 `POST /quizzes`
+##### parameters:
+| name  | type  | required  |
+| ------------ | ------------ | ------------ |
+|  quizCategory | POST  | optional  |
+|  previousQuestions | POST  | optional  |
 
     curl  -i -H 'Accept: application/json' \
 		-H 'Content-Type: application/json;charset=utf-8' \
@@ -320,6 +341,10 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 #### Request
 
 `GET /categories/{category_id}/questions?page={page_number}`
+##### parameters:
+| name  | type  | required  |
+| ------------ | ------------ | ------------ |
+|  page | GET  | optional  |
 
     curl -i -H 'Accept: application/json' 'http://localhost:3000/categories/4/questions?page=1'
 
