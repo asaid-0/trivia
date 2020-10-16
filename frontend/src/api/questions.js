@@ -12,7 +12,7 @@ export const deleteQuestion = (id) => axios.delete(`/questions/${id}`)
     .then(res => res.data)
     .catch(err => alert(JSON.stringify(err.response.data, undefined, 2)));
 
-export const searchQuestions = (keyword) => axios.post(`/search/${keyword}/questions`)
+export const searchQuestions = (keyword) => axios.post('/questions/search', { keyword })
     .then(res => res.data)
     .catch(err => alert(JSON.stringify(err.response.data, undefined, 2)));
 
