@@ -76,8 +76,12 @@ def create_app(test_config=None):
 
     question = data.get('question', None)
     answer = data.get('answer', None)
-    category = data.get('category', None)
+    category = data.get('category', 1)
     difficulty = data.get('difficulty', 1)
+
+    if not question or not answer:
+      abort(422)
+
     categoryCheck = Category.query.filter(Category.id == int(category)).one_or_none()
     if not categoryCheck or not answer or not question:
       abort(422)
@@ -113,6 +117,8 @@ def create_app(test_config=None):
 
     quizCategory = data.get('quizCategory', None)
     previousQuestions = data.get('previousQuestions', [])
+    if not quizCategory:
+      abort(422)
     if not quizCategory:
       question = Question.query.filter(~Question.id.in_(previousQuestions)).limit(1).one_or_none()
     else:
@@ -156,6 +162,15 @@ def create_app(test_config=None):
       "error": str(error),
       "code": 405
       }), 405
+  
+  @app.errorhandler(500)
+  def internal_server_error(error):
+    return jsonify({
+      "success": False, 
+      "message": "Internal Server Error",
+      "error": str(error),
+      "code": 500
+      }), 500
 
 
   return app

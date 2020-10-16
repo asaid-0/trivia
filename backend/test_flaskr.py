@@ -6,8 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flaskr import create_app
 from models import setup_db, Question, Category
 
-
-
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
     def setUp(self):
@@ -25,13 +23,14 @@ class TriviaTestCase(unittest.TestCase):
             # create all tables
             self.db.create_all()
     
+    # Happy scenarios
     def test_get_questions(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['questions'])
         self.assertTrue(data['total'])
-    
+
     def test_get_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
@@ -84,6 +83,71 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         question = json.loads(res.data)
         self.assertEqual(question['category']['id'], 1)
+
+    # Bad scenarios
+    def test_error_get_questions(self):
+        res = self.client().get('/questions?page=1000000')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['code'], 404)
+        self.assertTrue(data['message'])
+        self.assertTrue(data['error'])  
+
+    def test_error_get_categories(self):
+        res = self.client().get('/categories/1000000')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['code'], 404)
+        self.assertTrue(data['message'])
+        self.assertTrue(data['error'])  
+
+    def test_error_get_questions_by_category(self):
+        res = self.client().get('/categories/4000000/questions')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['code'], 404)
+        self.assertTrue(data['message'])
+        self.assertTrue(data['error'])
+    
+    def test_empty_results_search_questions(self):
+        res = self.client().post('/questions/search', json={'keyword': '0sadvf@#$@#SGVsdegvskwegn'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(data['questions']), 0)
+        self.assertEqual(data['total'], 0)
+
+    def test_error_create_question(self):
+        res = self.client().get('/questions')
+        data = json.loads(res.data)
+        count_before = data['total']
+
+        q = {'question': None, 'answer': None, 'category': None, 'difficulty': None}
+        res = self.client().post('/questions', json=q)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['code'], 422)
+        self.assertEqual(data['message'], 'Unprocessable Entity')
+        self.assertTrue(data['error'])
+    
+    def test_error_delete_question(self):
+        res = self.client().get('/questions')
+        data = json.loads(res.data)
+        count_before = data['total']
+        res = self.client().delete(f'/questions/10000001')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['code'], 404)
+        self.assertTrue(data['message'])
+        self.assertTrue(data['error'])
+
+    def test_error_play_quiz(self):
+        res = self.client().post('/quizzes', json={'quizCategory': None, 'previousQuestions': []})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['code'], 422)
+        self.assertTrue(data['message'], 'Unprocessable Entity')
+        self.assertTrue(data['error'])
+
 
 if __name__ == "__main__":
     unittest.main()
