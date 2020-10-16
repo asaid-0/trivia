@@ -94,7 +94,9 @@ def create_app(test_config=None):
   @app.route('/questions/search', methods=['POST'])
   def search_question():
     data = request.get_json()
-    keyword = data.get('keyword', '')
+    keyword = data.get('keyword', None)
+    if not keyword:
+      abort(422)
     filtered_questions = Question.query.filter(Question.question.ilike(f'%{keyword}%')).order_by(Question.id.desc())
     if not filtered_questions.count():
       return jsonify({ 'questions': [], 'total': 0 })
@@ -117,7 +119,7 @@ def create_app(test_config=None):
 
     quizCategory = data.get('quizCategory', None)
     previousQuestions = data.get('previousQuestions', [])
-    if not quizCategory:
+    if quizCategory == None:
       abort(422)
     if not quizCategory:
       question = Question.query.filter(~Question.id.in_(previousQuestions)).limit(1).one_or_none()

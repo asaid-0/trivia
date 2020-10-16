@@ -109,12 +109,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['message'])
         self.assertTrue(data['error'])
     
-    def test_empty_results_search_questions(self):
-        res = self.client().post('/questions/search', json={'keyword': '0sadvf@#$@#SGVsdegvskwegn'})
+    def test_error_search_questions(self):
+        res = self.client().post('/questions/search', json={'keyword': None})
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(data['questions']), 0)
-        self.assertEqual(data['total'], 0)
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['code'], 422)
+        self.assertEqual(data['message'], 'Unprocessable Entity')
+        self.assertTrue(data['error'])
 
     def test_error_create_question(self):
         res = self.client().get('/questions')
